@@ -259,12 +259,14 @@ public class FilterService extends AccessibilityService implements SensorEventLi
             running = true;
             Cfg.WasEnabled = true;
             Cfg.Save(this);
+            return START_STICKY;
         } else if (intent_disable.equals((intent.getAction()))) {
             Ntf.show(this, false);
             stopFilter();
             running = false;
             Cfg.WasEnabled = false;
             Cfg.Save(this);
+            return Cfg.PersistentNotification ? START_STICKY : START_NOT_STICKY;
         }
 
         intentProcessed = true;
