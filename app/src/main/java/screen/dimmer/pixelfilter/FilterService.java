@@ -1,6 +1,7 @@
 package screen.dimmer.pixelfilter;
 
 import android.Manifest;
+import android.accessibilityservice.AccessibilityService;
 import android.app.Activity;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -29,11 +30,12 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 
-public class FilterService extends Service implements SensorEventListener {
+public class FilterService extends AccessibilityService implements SensorEventListener {
     public static final String LOG = "Pixel Filter"; //NON-NLS
 
     private WindowManager windowManager;
@@ -55,12 +57,13 @@ public class FilterService extends Service implements SensorEventListener {
     private int startCounter = 0;
 
     @Override
-    public IBinder onBind(Intent intent) {
-    return null;
-    }
+    public void onAccessibilityEvent(AccessibilityEvent accessibilityEvent) { }
 
     @Override
-    public void onCreate() {
+    public void onInterrupt() { Log.d(LOG, "onInterrupt called..."); }
+
+    @Override
+    public void onServiceConnected() {
         super.onCreate();
         running = true;
         MainActivity guiCopy = gui;
@@ -172,14 +175,17 @@ public class FilterService extends Service implements SensorEventListener {
 
     private WindowManager.LayoutParams getLayoutParams()
     {
+        WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        DisplayMetrics metrics =  Resources.getSystem().getDisplayMetrics();
+        windowManager.getDefaultDisplay().getRealMetrics(metrics);
         //DisplayMetrics metrics = new DisplayMetrics();
         //windowManager.getDefaultDisplay().getRealMetrics(metrics);
-        Point displaySize = new Point();
-        windowManager.getDefaultDisplay().getRealSize(displaySize);
-        Point windowSize = new Point();
-        windowManager.getDefaultDisplay().getSize(windowSize);
-        displaySize.x += displaySize.x - windowSize.x;
-        displaySize.y += displaySize.y - windowSize.y;
+        Point displaySize = new Point(metrics.widthPixels, metrics.heightPixels);
+//        windowManager.getDefaultDisplay().getRealSize(displaySize);
+//        Point windowSize = new Point();
+//        windowManager.getDefaultDisplay().getSize(windowSize);
+//        displaySize.x += displaySize.x - windowSize.x;
+//        displaySize.y += displaySize.y - windowSize.y;
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 displaySize.x, //metrics.widthPixels, // + getNavigationBarWidth(), //WindowManager.LayoutParams.MATCH_PARENT,
@@ -188,7 +194,7 @@ public class FilterService extends Service implements SensorEventListener {
                 0,
                 //Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                 //WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
-                WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                         WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
                         //WindowManager.LayoutParams.FLAG_FULLSCREEN |
@@ -245,9 +251,19 @@ public class FilterService extends Service implements SensorEventListener {
                 return START_STICKY;
             }
         }
-        if (Cfg.PersistentNotification && Intent.ACTION_RUN.equals(intent.getAction())) {
+        String intent_enable = this.getString(R.string.intent_enable);
+        String intent_disable = this.getString(R.string.intent_disable);
+        if (intent_enable.equals(intent.getAction())) {
+            Ntf.show(this, true);
             startFilter();
+            running = true;
             Cfg.WasEnabled = true;
+            Cfg.Save(this);
+        } else if (intent_disable.equals((intent.getAction()))) {
+            Ntf.show(this, false);
+            stopFilter();
+            running = false;
+            Cfg.WasEnabled = false;
             Cfg.Save(this);
         }
 
@@ -287,6 +303,7 @@ public class FilterService extends Service implements SensorEventListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(LOG, "Stopping...");
         destroyed = true;
         stopFilter();
 
@@ -354,7 +371,9 @@ public class FilterService extends Service implements SensorEventListener {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         Log.d(LOG, "Screen orientation changed, updating window layout"); //NON-NLS
-        WindowManager.LayoutParams params = getLayoutParams();
-        windowManager.updateViewLayout(view, params);
+        if (view != null) {
+            WindowManager.LayoutParams params = getLayoutParams();
+            windowManager.updateViewLayout(view, params);
+        }
     }
 }

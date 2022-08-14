@@ -17,7 +17,8 @@ public class Ntf {
 
         if (enable || Cfg.PersistentNotification) {
             PendingIntent edit = PendingIntent.getActivity(ctx, 0, new Intent(Intent.ACTION_EDIT, null, ctx, MainActivity.class), PendingIntent.FLAG_CANCEL_CURRENT);
-            PendingIntent cancel = PendingIntent.getService(ctx, 0, new Intent(enable ? Intent.ACTION_DELETE : Intent.ACTION_RUN, null, ctx, FilterService.class), PendingIntent.FLAG_CANCEL_CURRENT);
+            String status_intent = ctx.getString(enable ? R.string.intent_disable : R.string.intent_enable);
+            PendingIntent cancel = PendingIntent.getService(ctx, 0, new Intent(status_intent, null, ctx, FilterService.class), PendingIntent.FLAG_CANCEL_CURRENT);
             PendingIntent increase = PendingIntent.getService(ctx, 0, new Intent(ctx.getString(R.string.intent_darker), null, ctx, FilterService.class), PendingIntent.FLAG_CANCEL_CURRENT);
             PendingIntent decrease = PendingIntent.getService(ctx, 0, new Intent(ctx.getString(R.string.intent_brighter), null, ctx, FilterService.class), PendingIntent.FLAG_CANCEL_CURRENT);
 

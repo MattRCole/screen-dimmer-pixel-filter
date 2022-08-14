@@ -33,6 +33,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import static android.app.PendingIntent.*;
+
 
 public class MainActivity extends Activity implements CompoundButton.OnCheckedChangeListener, SensorEventListener {
     public static final String LOG = "Pixel Filter"; //NON-NLS
@@ -262,15 +264,28 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (FilterService.running == isChecked) {
-            Log.d(LOG, "GUI: Service already started, no need to enable it"); //NON-NLS
+            Log.d(LOG, "GUI: Filter in correct state: " + isChecked); //NON-NLS
             return;
         }
+        String intentString = this.getString(isChecked ? R.string.intent_enable : R.string.intent_disable);
+        PendingIntent toggle = getService(this, 0, new Intent(intentString, null, this, FilterService.class), FLAG_IMMUTABLE);
 
+        try {
+            toggle.send();
+        } catch (Exception e) {
+            Log.e(LOG, "Error while changing filter state: " + e);
+        }
         Intent intent = new Intent(this, FilterService.class);
+        Log.d(LOG, "GIU: Check this out: " + intent);
         if (isChecked) {
             startService(intent);
         } else {
             stopService(intent);
+//            try {
+//                cancel.send();
+//            } catch (Exception e) {
+//                Log.e(LOG, "Error on stopping service: " + e);
+//            }
             Cfg.WasEnabled = false;
             Cfg.Save(this);
         }

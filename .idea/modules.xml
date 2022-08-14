@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/screen-dimmer-pixel-filter.iml" filepath="$PROJECT_DIR$/screen-dimmer-pixel-filter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/screen-dimmer-pixel-filter.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/screen-dimmer-pixel-filter.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/screen-dimmer-pixel-filter.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/screen-dimmer-pixel-filter.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/screen-dimmer-pixel-filter.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/screen-dimmer-pixel-filter.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/screen-dimmer-pixel-filter.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/screen-dimmer-pixel-filter.app.unitTest.iml" />
     </modules>
   </component>
 </project>

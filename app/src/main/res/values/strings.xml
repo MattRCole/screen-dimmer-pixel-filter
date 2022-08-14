@@ -34,6 +34,8 @@
     <string name="tap_to_disable">Tap to disable</string>
     <string name="intent_darker" translatable="false">screen.dimmer.pixelfilter.darker</string>
     <string name="intent_brighter" translatable="false">screen.dimmer.pixelfilter.brighter</string>
+    <string name="intent_enable" translatable="false">screen.dimmer.pixelfilter.enable_filter</string>
+    <string name="intent_disable" translatable="false">screen.dimmer.pixelfilter.disable_filter</string>
     <string name="darker">Darker</string>
     <string name="brighter">Brighter</string>
     <string name="swipe_to_configure">Swipe down to configure</string>
